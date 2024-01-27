@@ -212,13 +212,12 @@ def _update_crontab(jobs: Dict[str, CronJob], filepath: Optional[str] = None) ->
 
     if filepath is None:
         proc = subprocess.Popen(
-            ["crontab", destfile.name],
+            ["crontab", output_filepath],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
         proc.communicate()
-        if proc.returncode:
-            raise OSError("Could not finalize updating the crontab")
+        os.remove(output_filepath)
 
 
 def clear_cronjobs(filepath: Optional[str] = None):

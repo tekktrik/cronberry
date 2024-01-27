@@ -90,17 +90,79 @@ def test_cronjob_reduce() -> None:
         job.reduce()
 
 
-def test_empty_crontab() -> None:
-    """Tests that the ability to empty the crontab."""
+def test_overwrite_crontab() -> None:
+    """Tests the ability to overwite a crontab."""
     overwrite_jobs = cronberry.parse_crontab("tests/tables/new.tab")
     cronberry.overwrite_crontab(overwrite_jobs)
     read_jobs = cronberry.parse_crontab()
     assert read_jobs == overwrite_jobs
 
+
+def test_clear_cronjobs() -> None:
+    """Tests the ability to clear cronjobs from a crontab."""
+    overwrite_jobs = cronberry.parse_crontab("tests/tables/new.tab")
+    cronberry.overwrite_crontab(overwrite_jobs)
     cronberry.clear_cronjobs()
     assert not cronberry.parse_crontab()
 
 
 def test_writeread_equality() -> None:
     """Tests that writing a cronjob then reading it is lossless."""
-    # cronberry.
+    file_jobs = cronberry.parse_crontab("tests/tables/new.tab")
+    cronberry.overwrite_crontab(file_jobs)
+    nonfile_jobs = cronberry.parse_crontab()
+    assert nonfile_jobs == file_jobs
+    cronberry.clear_cronjobs()
+
+
+def test_remove_cronjob() -> None:
+    """Tests removing a cronjob from a file."""
+    file_jobs = cronberry.parse_crontab("tests/tables/src.tab")
+    cronberry.overwrite_crontab(file_jobs)
+    cronberry.remove_cronjobs(["Test 2"])
+    remaining_jobs = cronberry.parse_crontab()
+    remaining_jobs_dict = {job.title: job for job in remaining_jobs}
+    for index, (key, exp) in enumerate(
+        (
+            ("Test 1", True),
+            ("Test 2", False),
+            ("Test 3", True),
+            ("Test 4", True),
+        )
+    ):
+        assert (key in remaining_jobs_dict) == exp
+        if exp:
+            assert remaining_jobs_dict[key] == file_jobs[index]
+
+    with pytest.raises(ValueError):
+        cronberry.remove_cronjobs(["Test 2"])
+
+    cronberry.clear_cronjobs()
+
+
+def test_add_cronjob() -> None:
+    """Tests adding a cronjob from a file."""
+    file_jobs = cronberry.parse_crontab("tests/tables/src.tab")
+    add_file_jobs = cronberry.parse_crontab("tests/tables/new.tab")
+    cronberry.overwrite_crontab(file_jobs)
+
+    combined_jobs = file_jobs + add_file_jobs
+    cronberry.add_cronjobs(add_file_jobs)
+
+    assert cronberry.parse_crontab() == combined_jobs
+
+    with pytest.raises(RuntimeError):
+        cronberry.add_cronjobs(add_file_jobs, "tests/tables/bad.tab")
+
+    add_file_jobs[0].command = "echo \"This wasn't here before!"
+
+    with pytest.raises(ValueError):
+        cronberry.add_cronjobs(add_file_jobs)
+
+    add_file_jobs[0].title = "Test 6"
+    cronberry.clear_cronjobs()
+
+    with pytest.raises(ValueError):
+        cronberry.add_cronjobs(add_file_jobs)
+
+    cronberry.clear_cronjobs()
