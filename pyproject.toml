@@ -53,3 +53,8 @@ ignore = ["D213", "D203"]
 
 [tool.coverage.run]
 source = ["cronberry"]
+
+[tool.coverage.report]
+exclude_also = [
+    "def __repr__",
+]

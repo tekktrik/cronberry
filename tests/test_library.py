@@ -4,6 +4,8 @@
 """Test file for functionality mostly related to reading crontabs."""
 
 import copy
+import os
+import tempfile
 from typing import List
 
 import pytest
@@ -90,10 +92,10 @@ def test_cronjob_reduce() -> None:
         job.reduce()
 
 
-def test_overwrite_crontab() -> None:
-    """Tests the ability to overwite a crontab."""
+def test_write_crontab() -> None:
+    """Tests the ability to (over)write a crontab."""
     overwrite_jobs = cronberry.parse_crontab("tests/tables/new.tab")
-    cronberry.overwrite_crontab(overwrite_jobs)
+    cronberry.write_crontab(overwrite_jobs)
     read_jobs = cronberry.parse_crontab()
     assert read_jobs == overwrite_jobs
 
@@ -101,7 +103,7 @@ def test_overwrite_crontab() -> None:
 def test_clear_cronjobs() -> None:
     """Tests the ability to clear cronjobs from a crontab."""
     overwrite_jobs = cronberry.parse_crontab("tests/tables/new.tab")
-    cronberry.overwrite_crontab(overwrite_jobs)
+    cronberry.write_crontab(overwrite_jobs)
     cronberry.clear_cronjobs()
     assert not cronberry.parse_crontab()
 
@@ -109,7 +111,7 @@ def test_clear_cronjobs() -> None:
 def test_writeread_equality() -> None:
     """Tests that writing a cronjob then reading it is lossless."""
     file_jobs = cronberry.parse_crontab("tests/tables/new.tab")
-    cronberry.overwrite_crontab(file_jobs)
+    cronberry.write_crontab(file_jobs)
     nonfile_jobs = cronberry.parse_crontab()
     assert nonfile_jobs == file_jobs
     cronberry.clear_cronjobs()
@@ -118,7 +120,7 @@ def test_writeread_equality() -> None:
 def test_remove_cronjob() -> None:
     """Tests removing a cronjob from a file."""
     file_jobs = cronberry.parse_crontab("tests/tables/src.tab")
-    cronberry.overwrite_crontab(file_jobs)
+    cronberry.write_crontab(file_jobs)
     cronberry.remove_cronjobs(["Test 2"])
     remaining_jobs = cronberry.parse_crontab()
     remaining_jobs_dict = {job.title: job for job in remaining_jobs}
@@ -144,12 +146,14 @@ def test_add_cronjob() -> None:
     """Tests adding a cronjob from a file."""
     file_jobs = cronberry.parse_crontab("tests/tables/src.tab")
     add_file_jobs = cronberry.parse_crontab("tests/tables/new.tab")
-    cronberry.overwrite_crontab(file_jobs)
+    cronberry.write_crontab(file_jobs)
 
     combined_jobs = file_jobs + add_file_jobs
     cronberry.add_cronjobs(add_file_jobs)
 
     assert cronberry.parse_crontab() == combined_jobs
+
+    # Test errors
 
     with pytest.raises(RuntimeError):
         cronberry.add_cronjobs(add_file_jobs, "tests/tables/bad.tab")
@@ -166,3 +170,20 @@ def test_add_cronjob() -> None:
         cronberry.add_cronjobs(add_file_jobs)
 
     cronberry.clear_cronjobs()
+
+
+def test_save_crontab() -> None:
+    """Tests the ability to save a crontab file."""
+    file_jobs = cronberry.parse_crontab("tests/tables/src.tab")
+    cronberry.write_crontab(file_jobs)
+    temp_file = tempfile.NamedTemporaryFile(mode="r+", encoding="utf-8", delete=False)
+    cronberry.save_crontab(temp_file.name)
+    temp_file.seek(0)
+
+    with open("tests/tables/src.tab", mode="r+") as origfile:
+        orig_contents = origfile.read()
+        save_contents = temp_file.read()
+
+    assert save_contents == orig_contents
+
+    os.remove(temp_file.name)

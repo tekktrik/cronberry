@@ -225,7 +225,17 @@ def clear_cronjobs(filepath: Optional[str] = None):
     _update_crontab({}, filepath)
 
 
-def overwrite_crontab(jobs: Iterable[CronJob], filepath: Optional[str] = None) -> None:
-    """Overwrite a specific crontab with provided jobs."""
+def write_crontab(jobs: Iterable[CronJob], filepath: Optional[str] = None) -> None:
+    """(Over)write a specific crontab with provided jobs."""
     job_dict = {job.title: job for job in jobs}
     _update_crontab(job_dict, filepath)
+
+
+def save_crontab(dest_filepath: str) -> None:
+    """Save the current user's crontab to a file."""
+    proc = subprocess.Popen(
+        ["crontab", "-l"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL
+    )
+    output, _ = proc.communicate()
+    with open(dest_filepath, mode="wb") as outfile:
+        outfile.write(output)
