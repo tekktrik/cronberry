@@ -187,3 +187,10 @@ def test_save_crontab() -> None:
     assert save_contents == orig_contents
 
     os.remove(temp_file.name)
+
+
+def test_cronjob_repr() -> None:
+    """Tests CrobJob.__repr__()."""
+    EXPECTED_REPR = "CronJob(title='Test 4', timing=ShorthandSyntax.YEARLY, command='echo \"Test 3!\"')"
+    target_job = cronberry.parse_crontab("tests/tables/src.tab")[-1]
+    assert repr(target_job) == EXPECTED_REPR
