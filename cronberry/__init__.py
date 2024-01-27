@@ -228,5 +228,4 @@ def clear_cronjobs(filepath: Optional[str] = None):
 def overwrite_crontab(jobs: Iterable[CronJob], filepath: Optional[str] = None) -> None:
     """Overwrite a specific crontab with provided jobs."""
     job_dict = {job.title: job for job in jobs}
-    print(job_dict)
     _update_crontab(job_dict, filepath)
