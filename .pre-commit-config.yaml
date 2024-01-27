@@ -26,9 +26,9 @@ repos:
         name: Format via ruff
   - repo: local
     hooks:
-      - id: pytest
-        name: Test code via pytest
+      - id: coverage.py
+        name: Test code via coverage.py
         language: system
-        entry: python -m pytest
+        entry: coverage run -m pytest
         types: [python]
         exclude: "^docs/"
