@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: 2024 Alec Delaney
+# SPDX-License-Identifier: MIT
+
+name: Run push-specific workflows
+
+on:
+  push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        py-version: [
+          "3.8",
+          "3.9",
+          "3.10",
+          "3.11",
+          "3.12",
+        ]
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install Python ${{ matrix.py-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.py-version }}
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      - name: Run pre-commit
+        run: |
+          pre-commit run --all-files
+      - name: Print coverage report
+        run: |
+          coverage report
