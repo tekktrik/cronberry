@@ -65,7 +65,7 @@ def test_cronjob_equality() -> None:
     assert cronberry.fields.StepValues(1, 2).__eq__(42) is False
 
 
-def test_cronjob_strfd() -> None:
+def test_cronjob_str() -> None:
     """Test the ability to convert a CronJob to its string equivalent."""
     jobs = cronberry.parse_crontab("tests/tables/src.tab")
     job = jobs[0]
