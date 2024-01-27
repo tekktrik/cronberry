@@ -20,7 +20,15 @@ repos:
     rev: v0.1.14
     hooks:
       - id: ruff
-        name: Run the ruff linter
+        name: Lint via ruff
         args: [--fix]
       - id: ruff-format
-        name: Run the ruff formatter
+        name: Format via ruff
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Test code via pytest
+        language: system
+        entry: python -m pytest
+        types: [python]
+        exclude: "^docs/"

@@ -50,3 +50,11 @@ dev = {file = ["requirements-dev.txt"]}
 [tool.ruff.lint]
 select = ["D", "PL", "UP", "I"]
 ignore = ["D213", "D203"]
+
+[tool.coverage.run]
+source = ["cronberry"]
+
+[tool.coverage.report]
+exclude_also = [
+    "raise NotImplementedError"
+]
