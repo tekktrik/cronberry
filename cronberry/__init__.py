@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 Alec Delaney
 # SPDX-License-Identifier: MIT
 
-"""CLI for working with multiple cron jobs within a single cron table."""
+"""Library for working with multiple cron jobs within a single cron table."""
 
 import functools
 import os
