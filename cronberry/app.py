@@ -1,0 +1,105 @@
+# SPDX-FileCopyrightText: 2024 Alec Delaney
+# SPDX-License-Identifier: MIT
+
+"""CLI for working with cronberry library."""
+
+from typing import Optional, Tuple
+
+import click
+
+import cronberry
+
+
+@click.group()
+def cli() -> None:
+    """Entry point for the CLI."""
+
+
+@cli.command()
+@click.argument("crontab", type=click.Path(dir_okay=False, resolve_path=True))
+@click.option(
+    "-f", "--filepath", type=click.Path(dir_okay=False, resolve_path=True), default=None
+)
+@click.option("-o", "--overwrite/--no-overwrite", default=False)
+def add(crontab: str, filepath: Optional[str], overwrite: bool) -> None:
+    """Add a jobs from a crontab file to the crontab being used."""
+    jobs = cronberry.parse_crontab(crontab)
+    cronberry.add_cronjobs(jobs, filepath, overwrite=overwrite)
+
+
+@cli.command()
+@click.argument("job_titles", nargs=-1)
+@click.option(
+    "-f", "--filepath", type=click.Path(dir_okay=False, resolve_path=True), default=None
+)
+@click.option("-i", "--ignore-missing/--no-ignore-missing", default=False)
+def remove(
+    job_titles: Tuple[str], filepath: Optional[str], ignore_missing: bool
+) -> None:
+    """Remove job(s) by title(s) from the crontab being used."""
+    unique_titles = set(job_titles)
+    if len(unique_titles) != len(job_titles):
+        raise click.ClickException("Duplicate job titles provided")
+    for job_title in job_titles:
+        try:
+            cronberry.remove_cronjobs(
+                job_title, filepath, ignore_missing=ignore_missing
+            )
+        except ValueError:
+            raise click.ClickException(
+                f"Job title {job_title} does not exist in the crontab"
+            )
+
+
+@cli.command()
+@click.argument(
+    "filepath", type=click.Path(dir_okay=False, writable=True, resolve_path=True)
+)
+def save(filepath: str) -> None:
+    """Save the current crontab being used."""
+    cronberry.save_crontab(filepath)
+
+
+@cli.command()
+@click.option(
+    "-f",
+    "--filepath",
+    type=click.Path(dir_okay=False, writable=True, resolve_path=True),
+    default=None,
+)
+def clear(filepath: Optional[str]) -> None:
+    """Clear the current crontab being used."""
+    cronberry.clear_cronjobs(filepath)
+
+
+@cli.command()
+@click.argument("job_title")
+@click.option(
+    "-f", "--filepath", type=click.Path(dir_okay=False, resolve_path=True), default=None
+)
+def job(job_title: str, filepath: Optional[str]) -> None:
+    """Get the a specific cronbjob from a crontab."""
+    all_jobs = cronberry.parse_crontab(filepath)
+    selected_jobs = [any_job for any_job in all_jobs if any_job.title == job_title]
+    if len(selected_jobs) < 1:
+        raise click.ClickException(
+            f"Job title {job_title} was not present in the crontab"
+        )
+    elif len(selected_jobs) > 1:
+        raise click.ClickException(
+            f"Job title {job_title} was found multiple times in the crontab"
+        )
+    selected_job = selected_jobs[0]
+    formatted_command = f"{selected_job.timing!s} {selected_job.command!s}"
+    click.echo(formatted_command)
+
+
+@cli.command()
+@click.option(
+    "-f", "--filepath", type=click.Path(dir_okay=False, resolve_path=True), default=None
+)
+def jobs(filepath: Optional[str]) -> None:
+    """Get the jobs from a specific crontab."""
+    jobs = cronberry.parse_crontab(filepath)
+    for job in jobs:
+        click.echo(job.title)

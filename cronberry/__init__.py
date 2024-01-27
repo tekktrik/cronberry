@@ -176,17 +176,23 @@ def add_cronjobs(
     _update_crontab(writeable_jobs, filepath)
 
 
-def remove_cronjobs(job_names: Iterable[str], filepath: Optional[str] = None) -> None:
+def remove_cronjobs(
+    job_names: Iterable[str],
+    filepath: Optional[str] = None,
+    *,
+    ignore_missing: bool = False,
+) -> None:
     """Remove the cronjobs from a crontab."""
     dest_crontab = parse_crontab(filepath)
     current_jobs = {job.title: job for job in dest_crontab}
 
     for job_name in job_names:
-        if job_name not in current_jobs:
+        if job_name not in current_jobs and not ignore_missing:
             raise ValueError(
                 f"Cron job '{job_name}' does not exist in the destination crontab"
             )
-        del current_jobs[job_name]
+        elif job_name in current_jobs:
+            del current_jobs[job_name]
 
     _update_crontab(current_jobs, filepath)
 

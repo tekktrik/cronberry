@@ -34,6 +34,9 @@ jobs:
       - name: Run pre-commit
         run: |
           pre-commit run --all-files
+      - name: Run pytests via coverage.py
+        run: |
+          coverage run -m pytest
       - name: Print coverage report
         run: |
           coverage report

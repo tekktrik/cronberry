@@ -35,6 +35,9 @@ dynamic = ["version", "dependencies", "optional-dependencies"]
 [project.urls]
 # TODO: Add project URLs here
 
+[project.scripts]
+cronberry = "cronberry.app:cli"
+
 [tool.setuptools]
 packages = ["cronberry"]
 

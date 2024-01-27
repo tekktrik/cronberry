@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 Alec Delaney
 # SPDX-License-Identifier: MIT
 
-"""Test file for functionality mostly related to reading crontabs."""
+"""Tests for functionality related to library functionality."""
 
 import copy
 import os
