@@ -73,3 +73,34 @@ def test_cronjob_str() -> None:
     with open("tests/tables/src.tab", encoding="utf-8") as textfile:
         cronjob_text = textfile.read().split("\n")[1]
     assert str(job) == cronjob_text.strip()
+
+
+def test_bad_parse() -> None:
+    """Tests that an error is raised when a bad values is parsed."""
+    with pytest.raises(ValueError):
+        cronberry.CronJob._parse_discrete_value("#42")
+
+
+def test_cronjob_reduce() -> None:
+    """Tests that the CronJob reduce functionality works."""
+    with pytest.raises(NotImplementedError):
+        job = cronberry.CronJob(
+            "Test", cronberry.fields.ShorthandSyntax.DAILY, 'echo "Test!'
+        )
+        job.reduce()
+
+
+def test_empty_crontab() -> None:
+    """Tests that the ability to empty the crontab."""
+    overwrite_jobs = cronberry.parse_crontab("tests/tables/new.tab")
+    cronberry.overwrite_crontab(overwrite_jobs)
+    read_jobs = cronberry.parse_crontab()
+    assert read_jobs == overwrite_jobs
+
+    cronberry.clear_cronjobs()
+    assert not cronberry.parse_crontab()
+
+
+def test_writeread_equality() -> None:
+    """Tests that writing a cronjob then reading it is lossless."""
+    # cronberry.

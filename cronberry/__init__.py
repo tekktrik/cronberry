@@ -211,4 +211,23 @@ def _update_crontab(jobs: Dict[str, CronJob], filepath: Optional[str] = None) ->
         destfile.write(tabtext)
 
     if filepath is None:
-        os.remove(output_filepath)
+        proc = subprocess.Popen(
+            ["crontab", destfile.name],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        proc.communicate()
+        if proc.returncode:
+            raise OSError("Could not finalize updating the crontab")
+
+
+def clear_cronjobs(filepath: Optional[str] = None):
+    """Clear all of the cronjobs in a crontab."""
+    _update_crontab({}, filepath)
+
+
+def overwrite_crontab(jobs: Iterable[CronJob], filepath: Optional[str] = None) -> None:
+    """Overwrite a specific crontab with provided jobs."""
+    job_dict = {job.title: job for job in jobs}
+    print(job_dict)
+    _update_crontab(job_dict, filepath)
