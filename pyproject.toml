@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2024 Alec Delaney
+# SPDX-License-Identifier: MIT
+
+[build-system]
+requires = [
+    "setuptools",
+    "setuptools-scm",
+    "wheel",
+]
+
+[project]
+name = "cronberry"
+description = "Library and CLI for working with multiple cron jobs within a single cron table"
+authors = [
+    {name = "Alec Delaney", email = "tekktrik@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">= 3.8"
+keywords = [
+    "TODO: Add keywords here"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+]
+dynamic = ["version", "dependencies", "optional-dependencies"]
+
+[project.urls]
+# TODO: Add project URLs here
+
+[tool.setuptools]
+packages = ["cronberry"]
+
+[tool.setuptools.dynamic.version]
+file = "VERSION"
+
+[tool.setuptools.dynamic.dependencies]
+file = "requirements.txt"
+
+[tool.setuptools.dynamic.optional-dependencies]
+dev = {file = ["requirements-dev.txt"]}
+
+[tool.ruff.lint]
+select = ["D", "PL", "UP", "I"]
+ignore = ["D213", "D203"]

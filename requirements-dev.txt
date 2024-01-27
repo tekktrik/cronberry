@@ -1,0 +1,4 @@
+# SPDX-FileCopyrightText: 2024 Alec Delaney
+# SPDX-License-Identifier: MIT
+
+pre-commit~=3.5

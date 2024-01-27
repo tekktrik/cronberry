@@ -1,0 +1,5 @@
+# SPDX-FileCopyrightText: 2024 Alec Delaney
+# SPDX-License-Identifier: MIT
+
+click~=8.1
+typing-extensions~=4.0
