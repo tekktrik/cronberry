@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: cronberry
+Upstream-Contact: Alec Delaney <tekktrik@gmail.com>
+Source: https://github.com/tekktrik/cronberry
+
+Files: tests/tables/*.tab
+Copyright: 2024 Alec Delaney
+License: MIT

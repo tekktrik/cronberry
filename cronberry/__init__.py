@@ -52,6 +52,17 @@ class CronJob:
         """Printable representation of the cron job."""
         return f"CronJob(title={self.title!r}, timing={self.timing}, command={self.command!r})"
 
+    def __eq__(self, __value: object) -> bool:
+        """Check equality."""
+        if isinstance(__value, CronJob):
+            if (
+                self.title == __value.title
+                and self.timing == __value.timing
+                and self.command == __value.command
+            ):
+                return True
+        return False
+
     @staticmethod
     def parse_cron_text(cron_text: str) -> Tuple[Timing, Command]:
         """Parse a cron job in textual format."""

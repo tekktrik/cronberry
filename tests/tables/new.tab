@@ -1,0 +1,5 @@
+# [Test 5]
+8 8 3 7 2 echo "Test 5!"
+
+# [Test 6]
+1 1 1 * * echo "Test 6!"

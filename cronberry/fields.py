@@ -85,22 +85,20 @@ class ExplicitTiming(NamedTuple):
     month: DiscreteValue
     day_of_week: DiscreteValue
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, __value: object) -> bool:
         """Check equality."""
-        if isinstance(other, ExplicitTiming):
+        if isinstance(__value, ExplicitTiming):
             return (
-                self.minute == other.minute
-                and self.hour == other.hour
-                and self.day_of_month == other.day_of_month
-                and self.month == other.month
-                and self.day_of_week == self.day_of_week
+                self.minute == __value.minute
+                and self.hour == __value.hour
+                and self.day_of_month == __value.day_of_month
+                and self.month == __value.month
+                and self.day_of_week == __value.day_of_week
             )
         return False
 
     def __str__(self) -> str:
         """Representation of the explicit timing as a string (a, b, c, d, e)."""
-        # print(type(self.minute))
-        # print(str(self.minute))
         minute_comp = ",".join(_cron_str(comp) for comp in self.minute)
         hour_comp = ",".join(_cron_str(comp) for comp in self.hour)
         dom_comp = ",".join(_cron_str(comp) for comp in self.day_of_month)

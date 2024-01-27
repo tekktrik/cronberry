@@ -2,3 +2,5 @@
 # SPDX-License-Identifier: MIT
 
 pre-commit~=3.5
+pytest~=7.4
+pycoverage~=7.4

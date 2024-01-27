@@ -139,3 +139,6 @@ links/
 
 # LibreOffice specific files
 .~lock.*
+
+# Project specific files
+tests/backup/
