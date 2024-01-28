@@ -17,6 +17,7 @@ check:
 test:
 	coverage run -m pytest
 	coverage report
+	coverage html
 
 .PHONY: install
 install:
