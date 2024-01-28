@@ -121,7 +121,7 @@ def test_remove_cronjob() -> None:
     """Tests removing a cronjob from a file."""
     file_jobs = cronberry.parse_crontab("tests/tables/src.tab")
     cronberry.write_crontab(file_jobs)
-    cronberry.remove_cronjobs(["Test 2"])
+    cronberry.remove_cronjob("Test 2")
     remaining_jobs = cronberry.parse_crontab()
     remaining_jobs_dict = {job.title: job for job in remaining_jobs}
     for index, (key, exp) in enumerate(
@@ -137,7 +137,7 @@ def test_remove_cronjob() -> None:
             assert remaining_jobs_dict[key] == file_jobs[index]
 
     with pytest.raises(ValueError):
-        cronberry.remove_cronjobs(["Test 2"])
+        cronberry.remove_cronjob("Test 2")
 
     cronberry.clear_cronjobs()
 

@@ -42,9 +42,7 @@ def remove(
         raise click.ClickException("Duplicate job titles provided")
     for job_title in job_titles:
         try:
-            cronberry.remove_cronjobs(
-                job_title, filepath, ignore_missing=ignore_missing
-            )
+            cronberry.remove_cronjob(job_title, filepath, ignore_missing=ignore_missing)
         except ValueError:
             raise click.ClickException(
                 f"Job title {job_title} does not exist in the crontab"
