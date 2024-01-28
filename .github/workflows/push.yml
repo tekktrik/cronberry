@@ -42,7 +42,7 @@ jobs:
           coverage report
       - name: Create XML coverage report
         run: |
-          coverage xml
+          coverage xml -o coverage_${{ matrix.py-version }}.xml
       - name: Upload coverage report to Codecov
         uses: codecov/codecov-action@v3
         with:
