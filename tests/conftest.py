@@ -19,7 +19,7 @@ def pytest_sessionstart(session: pytest.Session) -> None:
     )
     output, _ = proc.communicate()
 
-    if output:
+    if output:  # pragma: no cover
         backup = pathlib.Path(BACKUP_FILEPATH)
         backup.parent.mkdir(parents=True, exist_ok=True)
         backup.write_bytes(output)
@@ -42,7 +42,7 @@ def pytest_sessionfinish(
     proc.communicate()
 
     backup = pathlib.Path(BACKUP_FILEPATH)
-    if backup.exists():
+    if backup.exists():  # pragma: no cover
         proc = subprocess.Popen(
             ["crontab", str(backup.resolve())],
             stdout=subprocess.DEVNULL,
