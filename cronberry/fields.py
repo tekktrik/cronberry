@@ -35,8 +35,8 @@ ExactValue: TypeAlias = int
 class ValueRange(NamedTuple):
     """Named tuple of a range of values (3-5)."""
 
-    start: int
-    end: int
+    start: ExactValue
+    end: ExactValue
 
     def __eq__(self, other: Any) -> bool:
         """Check equality."""
@@ -53,7 +53,7 @@ class StepValues(NamedTuple):
     """Named tuple of a set of step values (8/3)."""
 
     duration: Union[AnyValue, ExactValue, ValueRange]
-    frequency: int
+    frequency: ExactValue
 
     def __eq__(self, other: Any) -> bool:
         """Check equality."""
