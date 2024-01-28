@@ -9,6 +9,10 @@ lint:
 format:
 	pre-commit run ruff-format --all-files
 
+.PHONY: reuse
+reuse:
+	pre-commit run reuse --all-files
+
 .PHONY: check
 check:
 	pre-commit run --all-files
