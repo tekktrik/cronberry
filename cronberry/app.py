@@ -16,27 +16,51 @@ def cli() -> None:
 
 
 @cli.command()
-@click.argument("crontab", type=click.Path(dir_okay=False, resolve_path=True))
-@click.option(
-    "-f", "--filepath", type=click.Path(dir_okay=False, resolve_path=True), default=None
+@click.argument(
+    "crontab",
+    type=click.Path(dir_okay=False, resolve_path=True),
 )
-@click.option("-o", "--overwrite/--no-overwrite", default=False)
+@click.option(
+    "-f",
+    "--filepath",
+    type=click.Path(dir_okay=False, resolve_path=True),
+    default=None,
+    help="Filepath to use instead of the user's crontab",
+)
+@click.option(
+    "-o",
+    "--overwrite/--no-overwrite",
+    default=False,
+    help="Overwrite if the job currently exists in the crontab",
+)
 def add(crontab: str, filepath: Optional[str], overwrite: bool) -> None:
-    """Add a jobs from a crontab file to the crontab being used."""
+    """Add a jobs from CRONTAB to the crontab being used."""
     jobs = cronberry.parse_crontab(crontab)
     cronberry.add_cronjobs(jobs, filepath, overwrite=overwrite)
 
 
 @cli.command()
-@click.argument("job_titles", nargs=-1)
-@click.option(
-    "-f", "--filepath", type=click.Path(dir_okay=False, resolve_path=True), default=None
+@click.argument(
+    "job_titles",
+    nargs=-1,
 )
-@click.option("-i", "--ignore-missing/--no-ignore-missing", default=False)
+@click.option(
+    "-f",
+    "--filepath",
+    type=click.Path(dir_okay=False, resolve_path=True),
+    default=None,
+    help="Filepath to use instead of the user's crontab",
+)
+@click.option(
+    "-i",
+    "--ignore-missing/--no-ignore-missing",
+    default=False,
+    help="Ignore jobs missing from the crontab",
+)
 def remove(
     job_titles: Tuple[str], filepath: Optional[str], ignore_missing: bool
 ) -> None:
-    """Remove job(s) by title(s) from the crontab being used."""
+    """Remove JOB_TITLES from the crontab being used."""
     unique_titles = set(job_titles)
     if len(unique_titles) != len(job_titles):
         raise click.ClickException("Duplicate job titles provided")
@@ -51,10 +75,11 @@ def remove(
 
 @cli.command()
 @click.argument(
-    "filepath", type=click.Path(dir_okay=False, writable=True, resolve_path=True)
+    "filepath",
+    type=click.Path(dir_okay=False, writable=True, resolve_path=True),
 )
 def save(filepath: str) -> None:
-    """Save the current crontab being used."""
+    """Save the current crontab being used to FILEPATH."""
     cronberry.save_crontab(filepath)
 
 
@@ -64,6 +89,7 @@ def save(filepath: str) -> None:
     "--filepath",
     type=click.Path(dir_okay=False, writable=True, resolve_path=True),
     default=None,
+    help="Filepath to use instead of the user's crontab",
 )
 def clear(filepath: Optional[str]) -> None:
     """Clear the current crontab being used."""
@@ -73,10 +99,14 @@ def clear(filepath: Optional[str]) -> None:
 @cli.command()
 @click.argument("job_title")
 @click.option(
-    "-f", "--filepath", type=click.Path(dir_okay=False, resolve_path=True), default=None
+    "-f",
+    "--filepath",
+    type=click.Path(dir_okay=False, resolve_path=True),
+    default=None,
+    help="Filepath to use instead of the user's crontab",
 )
 def job(job_title: str, filepath: Optional[str]) -> None:
-    """Get the a specific cronbjob from a crontab."""
+    """Get the cronbjob JOB_TITLE from a crontab."""
     all_jobs = cronberry.parse_crontab(filepath)
     selected_jobs = [any_job for any_job in all_jobs if any_job.title == job_title]
     if len(selected_jobs) < 1:
@@ -94,7 +124,11 @@ def job(job_title: str, filepath: Optional[str]) -> None:
 
 @cli.command()
 @click.option(
-    "-f", "--filepath", type=click.Path(dir_okay=False, resolve_path=True), default=None
+    "-f",
+    "--filepath",
+    type=click.Path(dir_okay=False, resolve_path=True),
+    default=None,
+    help="Filepath to use instead of the user's crontab",
 )
 def jobs(filepath: Optional[str]) -> None:
     """Get the jobs from a specific crontab."""
