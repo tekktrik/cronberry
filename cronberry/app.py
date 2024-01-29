@@ -34,7 +34,7 @@ def cli() -> None:
     help="Overwrite if the job currently exists in the crontab",
 )
 def add(crontab: str, filepath: Optional[str], overwrite: bool) -> None:
-    """Add a jobs from CRONTAB to the crontab being used."""
+    """Add a job from CRONTAB to the crontab being used."""
     jobs = cronberry.parse_crontab(crontab)
     cronberry.add_cronjobs(jobs, filepath, overwrite=overwrite)
 
