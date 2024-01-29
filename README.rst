@@ -1,3 +1,21 @@
+.. image:: https://img.shields.io/pypi/pyversions/cronberry
+   :alt: PyPI - Python Version
+
+.. image:: https://img.shields.io/github/actions/workflow/status/tekktrik/cronberry/push.yml
+   :alt: GitHub Actions Workflow Status
+
+.. image:: https://img.shields.io/codecov/c/github/tekktrik/cronberry
+   :alt: Codecov
+
+.. image:: https://img.shields.io/readthedocs/cronberry
+   :alt: Read the Docs
+
+.. image:: https://img.shields.io/pypi/wheel/cronberry
+   :alt: PyPI - Wheel
+
+.. image:: https://img.shields.io/pypi/dm/cronberry
+   :alt: PyPI - Downloads
+
 cronberry
 ---------
 
