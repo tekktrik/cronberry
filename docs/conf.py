@@ -12,13 +12,17 @@ author = "Alec Delaney"
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
-
-templates_path = ["_templates"]
-exclude_patterns = [
+extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.todo",
+    # "autoapi.extension",
 ]
+
+templates_path = ["_templates"]
+exclude_patterns = []
+
+# -- Options for Sphinx AutoAPI------------------------------------------------
+# autoapi_dirs = ["../cronberry"]
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -26,4 +30,4 @@ exclude_patterns = [
 
 html_theme = "sphinx_rtd_theme"
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path(), "_static"]
-html_static_path = ["_static"]
+# html_static_path = ["_static"]

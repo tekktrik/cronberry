@@ -18,7 +18,10 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">= 3.8"
 keywords = [
-    "TODO: Add keywords here"
+    "cron",
+    "crontab",
+    "tools",
+    "scheduler",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -29,12 +32,20 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Natural Language :: English",
     "Operating System :: POSIX :: Linux",
+    "Intended Audience :: Developers",
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Environment :: Console",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities",
     "Typing :: Typed",
 ]
 dynamic = ["version", "dependencies", "optional-dependencies"]
 
 [project.urls]
-# TODO: Add project URLs here
+homepage = "https://github.com/tekktrik/cronberry"
+repository = "https://github.com/tekktrik/cronberry"
+documentation = "https://cronberry.readthedocs.io/en/latest/"
 
 [project.scripts]
 cronberry = "cronberry.app:cli"
