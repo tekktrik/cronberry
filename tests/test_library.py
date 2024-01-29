@@ -95,7 +95,7 @@ def test_cronjob_reduce() -> None:
 def test_write_crontab() -> None:
     """Tests the ability to (over)write a crontab."""
     overwrite_jobs = cronberry.parse_crontab("tests/tables/new.tab")
-    cronberry.write_crontab(overwrite_jobs)
+    cronberry.write_cronjobs(overwrite_jobs)
     read_jobs = cronberry.parse_crontab()
     assert read_jobs == overwrite_jobs
 
@@ -103,7 +103,7 @@ def test_write_crontab() -> None:
 def test_clear_cronjobs() -> None:
     """Tests the ability to clear cronjobs from a crontab."""
     overwrite_jobs = cronberry.parse_crontab("tests/tables/new.tab")
-    cronberry.write_crontab(overwrite_jobs)
+    cronberry.write_cronjobs(overwrite_jobs)
     cronberry.clear_cronjobs()
     assert not cronberry.parse_crontab()
 
@@ -111,7 +111,7 @@ def test_clear_cronjobs() -> None:
 def test_writeread_equality() -> None:
     """Tests that writing a cronjob then reading it is lossless."""
     file_jobs = cronberry.parse_crontab("tests/tables/new.tab")
-    cronberry.write_crontab(file_jobs)
+    cronberry.write_cronjobs(file_jobs)
     nonfile_jobs = cronberry.parse_crontab()
     assert nonfile_jobs == file_jobs
     cronberry.clear_cronjobs()
@@ -120,7 +120,7 @@ def test_writeread_equality() -> None:
 def test_remove_cronjob() -> None:
     """Tests removing a cronjob from a file."""
     file_jobs = cronberry.parse_crontab("tests/tables/src.tab")
-    cronberry.write_crontab(file_jobs)
+    cronberry.write_cronjobs(file_jobs)
     cronberry.remove_cronjob("Test 2")
     remaining_jobs = cronberry.parse_crontab()
     remaining_jobs_dict = {job.title: job for job in remaining_jobs}
@@ -146,7 +146,7 @@ def test_add_cronjob() -> None:
     """Tests adding a cronjob from a file."""
     file_jobs = cronberry.parse_crontab("tests/tables/src.tab")
     add_file_jobs = cronberry.parse_crontab("tests/tables/new.tab")
-    cronberry.write_crontab(file_jobs)
+    cronberry.write_cronjobs(file_jobs)
 
     combined_jobs = file_jobs + add_file_jobs
     cronberry.add_cronjobs(add_file_jobs)
@@ -175,7 +175,7 @@ def test_add_cronjob() -> None:
 def test_save_crontab() -> None:
     """Tests the ability to save a crontab file."""
     file_jobs = cronberry.parse_crontab("tests/tables/src.tab")
-    cronberry.write_crontab(file_jobs)
+    cronberry.write_cronjobs(file_jobs)
     temp_file = tempfile.NamedTemporaryFile(mode="r+", encoding="utf-8", delete=False)
     cronberry.save_crontab(temp_file.name)
     temp_file.seek(0)

@@ -230,7 +230,7 @@ def clear_cronjobs(filepath: Optional[str] = None):
     _update_crontab({}, filepath)
 
 
-def write_crontab(jobs: Iterable[CronJob], filepath: Optional[str] = None) -> None:
+def write_cronjobs(jobs: Iterable[CronJob], filepath: Optional[str] = None) -> None:
     """(Over)write a specific crontab with provided jobs."""
     job_dict = {job.title: job for job in jobs}
     _update_crontab(job_dict, filepath)
