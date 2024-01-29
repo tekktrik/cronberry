@@ -23,13 +23,20 @@ test:
 	coverage report
 	coverage html
 
+.PHONY: docs
+docs:
+	sphinx-build -E -W -b html docs docs/build/html
+
 .PHONY: install
 install:
 	mv VERSION COPY_VERSION
 	echo "0.0.0" > VERSION
 	pip install -e .[dev]
 	mv COPY_VERSION VERSION
+	pip install -r docs/requirements.txt
 
 .PHONY: uninstall
 uninstall:
 	pip uninstall -y cronberry
+
+prepare: check test docs
