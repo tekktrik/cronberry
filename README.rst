@@ -49,6 +49,9 @@ Example
     # Add a specific job to the crontab
     cronberry add jobs.tab --title "Specific Job"
 
+    # Add a job manually to the crontab
+    cronberry enter "Manually Added" '5 4 3 2 1 echo "Custom cronjob"'
+
     # Remove a job from the crontab
     cronberry remove "Specific Job"
 
