@@ -45,6 +45,31 @@ def add(crontab: str, filepath: Optional[str], overwrite: bool, title: str) -> N
 
 
 @cli.command()
+@click.argument("job_title")
+@click.argument("cronjob")
+@click.option(
+    "-f",
+    "--filepath",
+    type=click.Path(dir_okay=False, resolve_path=True),
+    default=None,
+    help="Filepath to use instead of the user's crontab",
+)
+@click.option(
+    "-o",
+    "--overwrite/--no-overwrite",
+    default=False,
+    help="Overwrite if the job currently exists in the crontab",
+)
+def enter(
+    job_title: str, cronjob: str, filepath: Optional[str], overwrite: bool
+) -> None:
+    """Add CRONJOB with the name JOB_TITLE to the crontab."""
+    timing, command = cronberry.CronJob.parse_cron_text(cronjob)
+    job = cronberry.CronJob(job_title, timing, command)
+    cronberry.add_cronjobs((job,), filepath, overwrite=overwrite)
+
+
+@cli.command()
 @click.argument(
     "job_titles",
     nargs=-1,

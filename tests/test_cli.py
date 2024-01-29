@@ -188,3 +188,20 @@ def test_cronberry_jobs() -> None:
     result = runner.invoke(cli, ["jobs"])
     assert result.exit_code == 0
     assert result.output == expected_jobs
+
+    crontab_remove()
+
+
+def test_cronberry_enter() -> None:
+    """Tests the enter command."""
+    job_title = "Manual"
+    command = "1 2 3 4 5 echo Test"
+    runner = CliRunner()
+
+    result = runner.invoke(cli, ["enter", job_title, command])
+    assert result.exit_code == 0
+
+    _, output, _ = crontab_list()
+    assert output.decode() == f"# [{job_title}]\n{command}\n"
+
+    crontab_remove()
