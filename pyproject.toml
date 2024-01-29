@@ -29,6 +29,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Natural Language :: English",
     "Operating System :: POSIX :: Linux",
+    "Typing :: Typed",
 ]
 dynamic = ["version", "dependencies", "optional-dependencies"]
 
@@ -40,6 +41,9 @@ cronberry = "cronberry.app:cli"
 
 [tool.setuptools]
 packages = ["cronberry"]
+
+[tool.setuptools.package-data]
+cronberry = ["py.typed"]
 
 [tool.setuptools.dynamic.version]
 file = "VERSION"
