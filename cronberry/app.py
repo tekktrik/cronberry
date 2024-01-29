@@ -33,9 +33,14 @@ def cli() -> None:
     default=False,
     help="Overwrite if the job currently exists in the crontab",
 )
-def add(crontab: str, filepath: Optional[str], overwrite: bool) -> None:
+@click.option(
+    "-t", "--title", default="", help="Title of specific job to add from CRONTAB"
+)
+def add(crontab: str, filepath: Optional[str], overwrite: bool, title: str) -> None:
     """Add a job from CRONTAB to the crontab being used."""
     jobs = cronberry.parse_crontab(crontab)
+    if title:
+        jobs = [job for job in jobs if job.title == title]
     cronberry.add_cronjobs(jobs, filepath, overwrite=overwrite)
 
 

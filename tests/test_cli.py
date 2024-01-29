@@ -107,6 +107,21 @@ def test_cronberry_add() -> None:
 
     crontab_remove()
 
+    # Test adding specific jobs
+    crontab_set(new_filepath)
+    result = runner.invoke(cli, ["add", new_filepath, "-t", "Job 5"])
+    assert result.exit_code == 0
+
+    result = runner.invoke(cli, ["add", new_filepath, "-t", "Job 6"])
+    assert result.exit_code == 0
+
+    _, output, _ = crontab_list()
+    with open(new_filepath, mode="rb") as newfile:
+        new_contents = newfile.read()
+    assert output == new_contents
+
+    crontab_remove()
+
 
 def test_cronberry_remove() -> None:
     """Tests removing remove command."""
