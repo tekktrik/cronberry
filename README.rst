@@ -1,23 +1,29 @@
+cronberry
+---------
+
 .. image:: https://img.shields.io/pypi/pyversions/cronberry
+   :target: https://pypi.org/project/cronberry/
    :alt: PyPI - Python Version
 
 .. image:: https://img.shields.io/github/actions/workflow/status/tekktrik/cronberry/push.yml
+   :target: https://github.com/tekktrik/cronberry/actions
    :alt: GitHub Actions Workflow Status
 
-.. image:: https://img.shields.io/codecov/c/github/tekktrik/cronberry
-   :alt: Codecov
+.. image:: https://codecov.io/gh/tekktrik/cronberry/graph/badge.svg?token=9KR7QQH65H
+   :target: https://codecov.io/gh/tekktrik/cronberry
+   :alt: Codecov Report
 
 .. image:: https://img.shields.io/readthedocs/cronberry
+   :target: https://cronberry.readthedocs.io/en/latest/
    :alt: Read the Docs
 
 .. image:: https://img.shields.io/pypi/wheel/cronberry
+   :target: https://pypi.org/project/cronberry/
    :alt: PyPI - Wheel
 
 .. image:: https://img.shields.io/pypi/dm/cronberry
+   :target: https://pypi.org/project/cronberry/
    :alt: PyPI - Downloads
-
-cronberry
----------
 
 Library and CLI for working with multiple cron jobs within a single cron table
 
