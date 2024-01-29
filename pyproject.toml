@@ -15,7 +15,7 @@ authors = [
     {name = "Alec Delaney", email = "tekktrik@gmail.com"}
 ]
 license = {text = "MIT"}
-readme = "README.md"
+readme = "README.rst"
 requires-python = ">= 3.8"
 keywords = [
     "cron",
@@ -43,9 +43,9 @@ classifiers = [
 dynamic = ["version", "dependencies", "optional-dependencies"]
 
 [project.urls]
-homepage = "https://github.com/tekktrik/cronberry"
-repository = "https://github.com/tekktrik/cronberry"
-documentation = "https://cronberry.readthedocs.io/en/latest/"
+Homepage = "https://github.com/tekktrik/cronberry"
+Repository = "https://github.com/tekktrik/cronberry"
+Documentation = "https://cronberry.readthedocs.io/en/latest/"
 
 [project.scripts]
 cronberry = "cronberry.app:cli"
