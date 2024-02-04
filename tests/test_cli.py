@@ -152,7 +152,7 @@ def test_cronberry_remove() -> None:
     crontab_remove()
 
 
-def test_cronberry_job() -> None:
+def test_cronberry_view() -> None:
     """Tests the job command."""
     src_filepath = "tests/tables/src.tab"
     bad_filepath = "tests/tables/bad.tab"
@@ -161,17 +161,26 @@ def test_cronberry_job() -> None:
 
     crontab_set(src_filepath)
 
-    result = runner.invoke(cli, ["job", "Test 3"])
+    result = runner.invoke(cli, ["view", "Test 3"])
     assert result.exit_code == 0
     assert result.output == expected_job
 
+    with open(src_filepath, encoding="utf-8") as srcfile:
+        src_contents = srcfile.read()
+
+    job_text = "\n".join(src_contents.split("\n")[16:24])
+
+    result = runner.invoke(cli, ["view", "Test 3", "-v"])
+    assert result.exit_code == 0
+    assert result.output == job_text
+
     # Test errors
 
-    result = runner.invoke(cli, ["job", "Not in table"])
+    result = runner.invoke(cli, ["view", "Not in table"])
     assert result.exit_code != 0
 
     crontab_set(bad_filepath)
-    result = runner.invoke(cli, ["job", "Test 7"])
+    result = runner.invoke(cli, ["view", "Test 7"])
     assert result.exit_code != 0
 
     crontab_remove()

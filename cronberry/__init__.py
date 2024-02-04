@@ -153,6 +153,17 @@ class CronJob:
                 envvars[key] = '""'
         return timing_text, self.command, envvars
 
+    def to_file_text(self) -> str:
+        """Get the cron job as it would be written in the crontab."""
+        jobtext = ""
+        cron_timing, cron_cmd, envvars = self.to_job()
+        jobtext += f"# [{self.title}]\n"
+        for key, value in envvars.items():
+            write_value = value if value != "" else '""'
+            jobtext += f"{key.upper()}={write_value}\n"
+        jobtext += f"{cron_timing} {cron_cmd}\n"
+        return jobtext
+
 
 def parse_crontab(filepath: Optional[str] = None) -> List[CronJob]:
     """Parse the user's crontab."""
@@ -238,12 +249,7 @@ def _update_crontab(jobs: Dict[str, CronJob], filepath: Optional[str] = None) ->
     for index, job in enumerate(jobs.values()):
         if index != 0:
             tabtext += "\n"
-        cron_timing, cron_cmd, envvars = job.to_job()
-        tabtext += f"# [{job.title}]\n"
-        for key, value in envvars.items():
-            write_value = value if value != "" else '""'
-            tabtext += f"{key.upper()}={write_value}\n"
-        tabtext += f"{cron_timing} {cron_cmd}\n"
+        tabtext += job.to_file_text()
 
     write_file = (
         functools.partial(tempfile.NamedTemporaryFile, delete=False)
