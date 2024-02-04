@@ -168,7 +168,7 @@ def parse_crontab(filepath: Optional[str] = None) -> List[CronJob]:
 
     re_matches: List[Tuple[str, str]] = re.findall(CRONJOB_REGEX, text, re.M)
     if not re_matches:
-        return tuple()
+        return []
 
     jobs = []
     for items in re_matches:
