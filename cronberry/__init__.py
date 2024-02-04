@@ -4,6 +4,7 @@
 """Library for working with multiple cron jobs within a single cron table."""
 
 import functools
+import getpass
 import os
 import re
 import subprocess
@@ -21,7 +22,9 @@ from typing_extensions import TypeAlias
 
 from . import fields
 
-CRONJOB_REGEX = r"^# \[(.*)]\n(.*)$"
+CRONJOB_REGEX = r"^# \[(.*)]\n(.*)$\n(.*)$\n(.*)$\n(.*)$\n(.*)$\n(.*)$\n"
+CURRENT_USER = getpass.getuser()
+CURRENT_USER_PATH = os.path.expanduser("~")
 
 
 Timing: TypeAlias = Union[fields.ShorthandSyntax, fields.ExplicitTiming]
@@ -34,15 +37,27 @@ Command: TypeAlias = str
 class CronJob:
     """Cron job representation."""
 
-    def __init__(self, title: str, timing: Timing, command: Command):
+    def __init__(  # noqa: PLR0913
+        self,
+        title: str,
+        timing: Timing,
+        command: Command,
+        *,
+        mailto: str = CURRENT_USER,
+        mailfrom: str = "root",
+        path: str = CURRENT_USER_PATH,
+        shell: str = "/bin/sh",
+        cron_tz: str = "Etc/UTC",
+    ):
         """Initialize the cron job object."""
         self.title = title
         self.timing = timing
         self.command = command
-
-    def reduce(self) -> None:
-        """Reduce duplicate timing instructions."""
-        raise NotImplementedError("This feature is not yet implemented.")
+        self.mailto = mailto
+        self.mailfrom = mailfrom
+        self.path = path
+        self.shell = shell
+        self.cron_tz = cron_tz
 
     def __str__(self) -> str:
         """Representation of the cron job as a string (cron job)."""
@@ -50,7 +65,7 @@ class CronJob:
 
     def __repr__(self) -> str:
         """Printable representation of the cron job."""
-        return f"CronJob(title={self.title!r}, timing={self.timing}, command={self.command!r})"
+        return f"CronJob(title={self.title!r}, mailto={self.mailto!r}, mailfrom={self.mailfrom!r}, path={self.path!r}, shell={self.shell!r}, cron_tz={self.cron_tz!r}, timing={self.timing}, command={self.command!r})"
 
     def __eq__(self, __value: object) -> bool:
         """Check equality."""
@@ -59,6 +74,11 @@ class CronJob:
                 self.title == __value.title
                 and self.timing == __value.timing
                 and self.command == __value.command
+                and self.mailto == __value.mailto
+                and self.mailfrom == __value.mailfrom
+                and self.path == __value.path
+                and self.shell == __value.shell
+                and self.cron_tz == __value.cron_tz
             ):
                 return True
         return False
@@ -82,10 +102,10 @@ class CronJob:
         return timing, remaining_cron_text
 
     @classmethod
-    def from_job(cls, job_text: str, title: str) -> "CronJob":
+    def from_job(cls, job_text: str, title: str, envvars: Dict[str, str]) -> "CronJob":
         """Create a CronJob from a cron job in texual format with a provided title."""
         timing, command = cls.parse_cron_text(job_text)
-        return cls(title, timing, command)
+        return cls(title, timing, command, **envvars)
 
     @staticmethod
     def _parse_discrete_value(value: str) -> List[fields.DiscreteValue]:
@@ -115,13 +135,23 @@ class CronJob:
 
         return values
 
-    def to_job(self) -> Tuple[str, str]:
+    def to_job(self) -> Tuple[str, str, Dict[str, str]]:
         """Get the job syntax, with the accompanying title."""
         if isinstance(self.timing, fields.ShorthandSyntax):
             timing_text = self.timing.value
         else:
             timing_text = str(self.timing)
-        return timing_text, self.command
+        envvars = {
+            "mailto": self.mailto,
+            "mailfrom": self.mailfrom,
+            "path": self.path,
+            "shell": self.shell,
+            "cron_tz": self.cron_tz,
+        }
+        for key, value in envvars.items():
+            if value == "":
+                envvars[key] = '""'
+        return timing_text, self.command, envvars
 
 
 def parse_crontab(filepath: Optional[str] = None) -> List[CronJob]:
@@ -141,8 +171,14 @@ def parse_crontab(filepath: Optional[str] = None) -> List[CronJob]:
         return tuple()
 
     jobs = []
-    for title, cron_text in re_matches:
-        job = CronJob.from_job(cron_text, title)
+    for items in re_matches:
+        envvars = {}
+        for item in items[1:6]:
+            item_name, item_value = item.split("=")
+            envvar_name = item_name.rstrip().lower()
+            write_value = "" if item_value in ('""', "''") else item_value
+            envvars[envvar_name] = write_value.lstrip()
+        job = CronJob.from_job(items[6], items[0], envvars)
         jobs.append(job)
     return jobs
 
@@ -202,8 +238,12 @@ def _update_crontab(jobs: Dict[str, CronJob], filepath: Optional[str] = None) ->
     for index, job in enumerate(jobs.values()):
         if index != 0:
             tabtext += "\n"
-        cron_timing, cron_cmd = job.to_job()
-        tabtext += f"# [{job.title}]\n{cron_timing} {cron_cmd}\n"
+        cron_timing, cron_cmd, envvars = job.to_job()
+        tabtext += f"# [{job.title}]\n"
+        for key, value in envvars.items():
+            write_value = value if value != "" else '""'
+            tabtext += f"{key.upper()}={write_value}\n"
+        tabtext += f"{cron_timing} {cron_cmd}\n"
 
     write_file = (
         functools.partial(tempfile.NamedTemporaryFile, delete=False)

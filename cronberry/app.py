@@ -60,13 +60,47 @@ def add(crontab: str, filepath: Optional[str], overwrite: bool, title: str) -> N
     default=False,
     help="Overwrite if the job currently exists in the crontab",
 )
+@click.option(
+    "-mt",
+    "--mailto",
+    default=None,
+    help=f"MAILTO environment variable for the job (default is {cronberry.CURRENT_USER})",
+)
+@click.option(
+    "-mf",
+    "--mailfrom",
+    default=None,
+    help="MAILFROM environment variable for the job (default is 'root')",
+)
+@click.option(
+    "-p",
+    "--path",
+    default=None,
+    help=f"PATH environment variable for the job (default is {cronberry.CURRENT_USER_PATH})",
+)
+@click.option(
+    "-s",
+    "--shell",
+    default=None,
+    help="SHELL environment variable for the job (default is '/bin/sh/)",
+)
+@click.option(
+    "-t",
+    "--cron-tz",
+    default=None,
+    help=f"CRON_TZ environment variable for the job (default is 'Etc/UTC)",
+)
 def enter(
-    job_title: str, cronjob: str, filepath: Optional[str], overwrite: bool
+    job_title: str, cronjob: str, filepath: Optional[str], overwrite: bool, **kwargs
 ) -> None:
     """Add CRONJOB with the name JOB_TITLE to the crontab."""
+    job_kwargs = {key: value for key, value in kwargs.items() if value is not None}
     timing, command = cronberry.CronJob.parse_cron_text(cronjob)
-    job = cronberry.CronJob(job_title, timing, command)
-    cronberry.add_cronjobs((job,), filepath, overwrite=overwrite)
+    job = cronberry.CronJob(job_title, timing, command, **job_kwargs)
+    try:
+        cronberry.add_cronjobs((job,), filepath, overwrite=overwrite)
+    except (ValueError, RuntimeError) as err:
+        raise click.ClickException(err.args[0]) from err
 
 
 @cli.command()

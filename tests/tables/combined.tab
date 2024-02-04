@@ -1,17 +1,47 @@
 # [Test 1]
+MAILTO=""
+MAILFROM=root
+PATH=/home/someone
+SHELL=/bin/sh
+CRON_TZ=Etc/UTC
 * 3 * 1,2-3,4-5/1 * echo "Test 1!"
 
 # [Test 2]
+MAILTO=you
+MAILFROM=me
+PATH=/home/someone
+SHELL=/bin/sh
+CRON_TZ=Etc/UTC
 * * 5,*,8-31 * * echo "Test 2!"
 
 # [Test 3]
+MAILTO=""
+MAILFROM=you
+PATH=/home/someone
+SHELL=/bin/sh
+CRON_TZ=Etc/UTC
 3-45/3 * * */2 * echo "Test 3!"
 
 # [Test 4]
-@yearly echo "Test 3!"
+MAILTO=root
+MAILFROM=root
+PATH=/home/someone
+SHELL=/bin/sh
+CRON_TZ=Etc/Universal
+@yearly echo "Test 4!"
 
 # [Test 5]
+MAILTO=""
+MAILFROM=root
+PATH=/home/peep
+SHELL=/bin/sh
+CRON_TZ=Etc/UTC
 8 8 3 7 2 echo "Test 5!"
 
 # [Test 6]
+MAILTO=people@somewhere.com
+MAILFROM=person@elsewhere.com
+PATH=/home/someone
+SHELL=/bin/bash
+CRON_TZ=Etc/Universal
 1 1 1 * * echo "Test 6!"

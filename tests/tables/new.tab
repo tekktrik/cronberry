@@ -1,5 +1,15 @@
 # [Test 5]
+MAILTO=""
+MAILFROM=root
+PATH=/home/peep
+SHELL=/bin/sh
+CRON_TZ=Etc/UTC
 8 8 3 7 2 echo "Test 5!"
 
 # [Test 6]
+MAILTO=people@somewhere.com
+MAILFROM=person@elsewhere.com
+PATH=/home/someone
+SHELL=/bin/bash
+CRON_TZ=Etc/Universal
 1 1 1 * * echo "Test 6!"

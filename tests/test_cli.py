@@ -196,12 +196,36 @@ def test_cronberry_enter() -> None:
     """Tests the enter command."""
     job_title = "Manual"
     command = "1 2 3 4 5 echo Test"
+    mailto = ""
+    mailfrom = "root"
+    path = "/some/specific/dir"
+    cron_tz = "Etc/Universal"
     runner = CliRunner()
 
-    result = runner.invoke(cli, ["enter", job_title, command])
+    args = [
+        "enter",
+        job_title,
+        command,
+        "--mailto",
+        mailto,
+        "--mailfrom",
+        mailfrom,
+        "--path",
+        path,
+        "--cron-tz",
+        cron_tz,
+    ]
+
+    result = runner.invoke(cli, args)
     assert result.exit_code == 0
 
     _, output, _ = crontab_list()
-    assert output.decode() == f"# [{job_title}]\n{command}\n"
+    assert (
+        output.decode()
+        == f'# [{job_title}]\nMAILTO=""\nMAILFROM={mailfrom}\nPATH={path}\nSHELL=/bin/sh\nCRON_TZ={cron_tz}\n{command}\n'
+    )
+
+    result = runner.invoke(cli, ["enter", "Manual", "1 2 3 4 5 echo Yes"])
+    assert result.exit_code != 0
 
     crontab_remove()
