@@ -60,13 +60,47 @@ def add(crontab: str, filepath: Optional[str], overwrite: bool, title: str) -> N
     default=False,
     help="Overwrite if the job currently exists in the crontab",
 )
+@click.option(
+    "-mt",
+    "--mailto",
+    default=None,
+    help=f"MAILTO environment variable for the job (default is {cronberry.CURRENT_USER})",
+)
+@click.option(
+    "-mf",
+    "--mailfrom",
+    default=None,
+    help="MAILFROM environment variable for the job (default is 'root')",
+)
+@click.option(
+    "-p",
+    "--path",
+    default=None,
+    help=f"PATH environment variable for the job (default is {cronberry.CURRENT_USER_PATH})",
+)
+@click.option(
+    "-s",
+    "--shell",
+    default=None,
+    help="SHELL environment variable for the job (default is '/bin/sh/)",
+)
+@click.option(
+    "-t",
+    "--cron-tz",
+    default=None,
+    help=f"CRON_TZ environment variable for the job (default is 'Etc/UTC)",
+)
 def enter(
-    job_title: str, cronjob: str, filepath: Optional[str], overwrite: bool
+    job_title: str, cronjob: str, filepath: Optional[str], overwrite: bool, **kwargs
 ) -> None:
     """Add CRONJOB with the name JOB_TITLE to the crontab."""
+    job_kwargs = {key: value for key, value in kwargs.items() if value is not None}
     timing, command = cronberry.CronJob.parse_cron_text(cronjob)
-    job = cronberry.CronJob(job_title, timing, command)
-    cronberry.add_cronjobs((job,), filepath, overwrite=overwrite)
+    job = cronberry.CronJob(job_title, timing, command, **job_kwargs)
+    try:
+        cronberry.add_cronjobs((job,), filepath, overwrite=overwrite)
+    except (ValueError, RuntimeError) as err:
+        raise click.ClickException(err.args[0]) from err
 
 
 @cli.command()
@@ -135,7 +169,14 @@ def clear(filepath: Optional[str]) -> None:
     default=None,
     help="Filepath to use instead of the user's crontab",
 )
-def job(job_title: str, filepath: Optional[str]) -> None:
+@click.option(
+    "-v",
+    "--variables",
+    is_flag=True,
+    default=False,
+    help="See the environment variables associated with the job",
+)
+def view(job_title: str, filepath: Optional[str], variables: bool) -> None:
     """Get the cronbjob JOB_TITLE from a crontab."""
     all_jobs = cronberry.parse_crontab(filepath)
     selected_jobs = [any_job for any_job in all_jobs if any_job.title == job_title]
@@ -148,7 +189,10 @@ def job(job_title: str, filepath: Optional[str]) -> None:
             f"Job title {job_title} was found multiple times in the crontab"
         )
     selected_job = selected_jobs[0]
-    formatted_command = f"{selected_job.timing!s} {selected_job.command!s}"
+    if variables:
+        formatted_command = selected_job.to_file_text()[:-1]
+    else:
+        formatted_command = str(selected_job)
     click.echo(formatted_command)
 
 

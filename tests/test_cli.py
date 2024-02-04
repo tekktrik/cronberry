@@ -152,7 +152,7 @@ def test_cronberry_remove() -> None:
     crontab_remove()
 
 
-def test_cronberry_job() -> None:
+def test_cronberry_view() -> None:
     """Tests the job command."""
     src_filepath = "tests/tables/src.tab"
     bad_filepath = "tests/tables/bad.tab"
@@ -161,17 +161,26 @@ def test_cronberry_job() -> None:
 
     crontab_set(src_filepath)
 
-    result = runner.invoke(cli, ["job", "Test 3"])
+    result = runner.invoke(cli, ["view", "Test 3"])
     assert result.exit_code == 0
     assert result.output == expected_job
 
+    with open(src_filepath, encoding="utf-8") as srcfile:
+        src_contents = srcfile.read()
+
+    job_text = "\n".join(src_contents.split("\n")[16:24])
+
+    result = runner.invoke(cli, ["view", "Test 3", "-v"])
+    assert result.exit_code == 0
+    assert result.output == job_text
+
     # Test errors
 
-    result = runner.invoke(cli, ["job", "Not in table"])
+    result = runner.invoke(cli, ["view", "Not in table"])
     assert result.exit_code != 0
 
     crontab_set(bad_filepath)
-    result = runner.invoke(cli, ["job", "Test 7"])
+    result = runner.invoke(cli, ["view", "Test 7"])
     assert result.exit_code != 0
 
     crontab_remove()
@@ -196,12 +205,36 @@ def test_cronberry_enter() -> None:
     """Tests the enter command."""
     job_title = "Manual"
     command = "1 2 3 4 5 echo Test"
+    mailto = ""
+    mailfrom = "root"
+    path = "/some/specific/dir"
+    cron_tz = "Etc/Universal"
     runner = CliRunner()
 
-    result = runner.invoke(cli, ["enter", job_title, command])
+    args = [
+        "enter",
+        job_title,
+        command,
+        "--mailto",
+        mailto,
+        "--mailfrom",
+        mailfrom,
+        "--path",
+        path,
+        "--cron-tz",
+        cron_tz,
+    ]
+
+    result = runner.invoke(cli, args)
     assert result.exit_code == 0
 
     _, output, _ = crontab_list()
-    assert output.decode() == f"# [{job_title}]\n{command}\n"
+    assert (
+        output.decode()
+        == f'# [{job_title}]\nMAILTO=""\nMAILFROM={mailfrom}\nPATH={path}\nSHELL=/bin/sh\nCRON_TZ={cron_tz}\n{command}\n'
+    )
+
+    result = runner.invoke(cli, ["enter", "Manual", "1 2 3 4 5 echo Yes"])
+    assert result.exit_code != 0
 
     crontab_remove()
