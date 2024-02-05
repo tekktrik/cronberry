@@ -90,6 +90,15 @@ Example
     # CRON_TZ=/Etc/UTC
     # * * * * * echo "This runs frequently"
 
+    # See all the jobs in crontab (you can also use the -v flag)
+    cronberry list
+    # Returns:
+    # jobs.tab contents:
+    # * * * * * echo "This runs frequently"
+    #
+    # # [Specific Job]
+    # 1 2 3 4 5 echo "This runs... oddly specifically
+
     # Get all the job titles from the crontab
     cronberry jobs
     # Returns:
