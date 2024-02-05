@@ -204,6 +204,34 @@ def view(job_title: str, filepath: Optional[str], variables: bool) -> None:
     default=None,
     help="Filepath to use instead of the user's crontab",
 )
+@click.option(
+    "-v",
+    "--variables",
+    is_flag=True,
+    default=False,
+    help="See the environment variables associated with the job",
+)
+def list(filepath: Optional[str], variables: bool) -> None:
+    """Get the cronbjob JOB_TITLE from a crontab."""
+    all_jobs = cronberry.parse_crontab(filepath)
+    for index, selected_job in enumerate(all_jobs):
+        if index != 0:
+            click.echo()
+        if variables:
+            formatted_command = selected_job.to_file_text()[:-1]
+        else:
+            formatted_command = f"# [{selected_job.title}]\n{str(selected_job)}"
+        click.echo(formatted_command)
+
+
+@cli.command()
+@click.option(
+    "-f",
+    "--filepath",
+    type=click.Path(dir_okay=False, resolve_path=True),
+    default=None,
+    help="Filepath to use instead of the user's crontab",
+)
 def jobs(filepath: Optional[str]) -> None:
     """Get the jobs from a specific crontab."""
     jobs = cronberry.parse_crontab(filepath)
