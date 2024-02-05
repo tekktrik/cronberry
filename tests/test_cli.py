@@ -120,6 +120,11 @@ def test_cronberry_add() -> None:
         new_contents = newfile.read()
     assert output == new_contents
 
+    # Test errors
+
+    result = runner.invoke(cli, ["add", new_filepath])
+    assert result.exit_code == 1
+
     crontab_remove()
 
 

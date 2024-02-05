@@ -41,7 +41,10 @@ def add(crontab: str, filepath: Optional[str], overwrite: bool, title: str) -> N
     jobs = cronberry.parse_crontab(crontab)
     if title:
         jobs = [job for job in jobs if job.title == title]
-    cronberry.add_cronjobs(jobs, filepath, overwrite=overwrite)
+    try:
+        cronberry.add_cronjobs(jobs, filepath, overwrite=overwrite)
+    except (ValueError, RuntimeError) as err:
+        raise click.ClickException(err.args[0]) from err
 
 
 @cli.command()
