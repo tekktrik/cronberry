@@ -11,6 +11,7 @@ import cronberry
 
 
 @click.group()
+@click.version_option()
 def cli() -> None:
     """Entry point for the CLI."""
 
