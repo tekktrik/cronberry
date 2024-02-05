@@ -61,7 +61,12 @@ class CronJob:
 
     def __str__(self) -> str:
         """Representation of the cron job as a string (cron job)."""
-        return f"{self.timing} {self.command}"
+        timing = (
+            self.timing.value
+            if isinstance(self.timing, fields.ShorthandSyntax)
+            else self.timing
+        )
+        return f"{timing} {self.command}"
 
     def __repr__(self) -> str:
         """Printable representation of the cron job."""

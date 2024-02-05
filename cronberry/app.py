@@ -41,7 +41,10 @@ def add(crontab: str, filepath: Optional[str], overwrite: bool, title: str) -> N
     jobs = cronberry.parse_crontab(crontab)
     if title:
         jobs = [job for job in jobs if job.title == title]
-    cronberry.add_cronjobs(jobs, filepath, overwrite=overwrite)
+    try:
+        cronberry.add_cronjobs(jobs, filepath, overwrite=overwrite)
+    except (ValueError, RuntimeError) as err:
+        raise click.ClickException(err.args[0]) from err
 
 
 @cli.command()
@@ -194,6 +197,34 @@ def view(job_title: str, filepath: Optional[str], variables: bool) -> None:
     else:
         formatted_command = str(selected_job)
     click.echo(formatted_command)
+
+
+@cli.command()
+@click.option(
+    "-f",
+    "--filepath",
+    type=click.Path(dir_okay=False, resolve_path=True),
+    default=None,
+    help="Filepath to use instead of the user's crontab",
+)
+@click.option(
+    "-v",
+    "--variables",
+    is_flag=True,
+    default=False,
+    help="See the environment variables associated with the job",
+)
+def list(filepath: Optional[str], variables: bool) -> None:
+    """Get the cronbjob JOB_TITLE from a crontab."""
+    all_jobs = cronberry.parse_crontab(filepath)
+    for index, selected_job in enumerate(all_jobs):
+        if index != 0:
+            click.echo()
+        if variables:
+            formatted_command = selected_job.to_file_text()[:-1]
+        else:
+            formatted_command = f"# [{selected_job.title}]\n{str(selected_job)}"
+        click.echo(formatted_command)
 
 
 @cli.command()

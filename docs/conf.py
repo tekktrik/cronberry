@@ -15,14 +15,10 @@ author = "Alec Delaney"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.todo",
-    # "autoapi.extension",
 ]
 
 templates_path = ["_templates"]
 exclude_patterns = []
-
-# -- Options for Sphinx AutoAPI------------------------------------------------
-# autoapi_dirs = ["../cronberry"]
 
 
 # -- Options for HTML output -------------------------------------------------

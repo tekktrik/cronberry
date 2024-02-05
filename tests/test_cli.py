@@ -120,6 +120,11 @@ def test_cronberry_add() -> None:
         new_contents = newfile.read()
     assert output == new_contents
 
+    # Test errors
+
+    result = runner.invoke(cli, ["add", new_filepath])
+    assert result.exit_code == 1
+
     crontab_remove()
 
 
@@ -153,7 +158,7 @@ def test_cronberry_remove() -> None:
 
 
 def test_cronberry_view() -> None:
-    """Tests the job command."""
+    """Tests the view command."""
     src_filepath = "tests/tables/src.tab"
     bad_filepath = "tests/tables/bad.tab"
     expected_job = '3-45/3 * * */2 * echo "Test 3!"\n'
@@ -236,5 +241,38 @@ def test_cronberry_enter() -> None:
 
     result = runner.invoke(cli, ["enter", "Manual", "1 2 3 4 5 echo Yes"])
     assert result.exit_code != 0
+
+    crontab_remove()
+
+
+def test_cronberry_list() -> None:
+    """Tests the list command."""
+    src_filepath = "tests/tables/src.tab"
+    runner = CliRunner()
+
+    crontab_set(src_filepath)
+
+    with open(src_filepath, encoding="utf-8") as srcfile:
+        file_contents = srcfile.read()
+
+    jobs_fulltext = ""
+    jobs_shorttext = ""
+    for job_index in range(4):
+        if job_index != 0:
+            jobs_fulltext += "\n"
+            jobs_shorttext += "\n"
+        job_lines = file_contents.split("\n")[job_index * 8 : (job_index * 8) + 7]
+        job_fulltext = "\n".join(job_lines) + "\n"
+        job_shorttext = f"{job_lines[0]}\n{job_lines[-1]}\n"
+        jobs_fulltext += job_fulltext
+        jobs_shorttext += job_shorttext
+
+    result = runner.invoke(cli, ["list"])
+    assert result.exit_code == 0
+    assert result.output == jobs_shorttext
+
+    result = runner.invoke(cli, ["list", "-v"])
+    assert result.exit_code == 0
+    assert result.output == jobs_fulltext
 
     crontab_remove()
