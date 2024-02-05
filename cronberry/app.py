@@ -180,7 +180,7 @@ def clear(filepath: Optional[str]) -> None:
     help="See the environment variables associated with the job",
 )
 def view(job_title: str, filepath: Optional[str], variables: bool) -> None:
-    """Get the cronbjob JOB_TITLE from a crontab."""
+    """View the cronbjob JOB_TITLE from a crontab."""
     all_jobs = cronberry.parse_crontab(filepath)
     selected_jobs = [any_job for any_job in all_jobs if any_job.title == job_title]
     if len(selected_jobs) < 1:
@@ -215,7 +215,7 @@ def view(job_title: str, filepath: Optional[str], variables: bool) -> None:
     help="See the environment variables associated with the job",
 )
 def list(filepath: Optional[str], variables: bool) -> None:
-    """Get the cronbjob JOB_TITLE from a crontab."""
+    """List all the jobs in a given cron table."""
     all_jobs = cronberry.parse_crontab(filepath)
     for index, selected_job in enumerate(all_jobs):
         if index != 0:

@@ -35,7 +35,7 @@ Command: TypeAlias = str
 
 
 class CronJob:
-    """Cron job representation."""
+    """Cron job representation, along with associated environment variables."""
 
     def __init__(  # noqa: PLR0913
         self,
@@ -256,13 +256,13 @@ def _update_crontab(jobs: Dict[str, CronJob], filepath: Optional[str] = None) ->
             tabtext += "\n"
         tabtext += job.to_file_text()
 
-    write_file = (
+    write_partial = (
         functools.partial(tempfile.NamedTemporaryFile, delete=False)
         if filepath is None
         else functools.partial(open, filepath)
     )
 
-    with write_file(mode="w", encoding="utf-8") as destfile:
+    with write_partial(mode="w", encoding="utf-8") as destfile:
         output_filepath = destfile.name
         destfile.write(tabtext)
 
