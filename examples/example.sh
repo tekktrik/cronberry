@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2024 Alec Delaney
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # The following examples assume you have the following example
 # crontab file jobs.tab.  Note that due to the way the examples

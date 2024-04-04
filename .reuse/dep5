@@ -5,4 +5,4 @@ Source: https://github.com/tekktrik/cronberry
 
 Files: tests/tables/*.tab
 Copyright: 2024 Alec Delaney
-License: MIT
+License: GPL-3.0-or-later

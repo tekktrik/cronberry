@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2024 Alec Delaney
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 """Library for working with multiple cron jobs within a single cron table."""
 
