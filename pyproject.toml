@@ -14,7 +14,7 @@ description = "Library and CLI for working with multiple cron jobs within a sing
 authors = [
     {name = "Alec Delaney", email = "tekktrik@gmail.com"}
 ]
-license = {text = "MIT"}
+license = {text = "GPL-3.0-or-later"}
 readme = "README.rst"
 requires-python = ">= 3.8"
 keywords = [
@@ -34,7 +34,7 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
     "Intended Audience :: Developers",
     "Development Status :: 5 - Production/Stable",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Environment :: Console",
     "Topic :: Software Development :: Libraries",
     "Topic :: Utilities",
