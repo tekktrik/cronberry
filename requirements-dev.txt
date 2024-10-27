@@ -4,3 +4,5 @@
 pre-commit~=3.5
 pytest~=8.0
 coverage~=7.4
+sphinx~=8.1
+sphinx-rtd-theme~=3.0
