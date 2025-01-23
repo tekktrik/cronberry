@@ -24,7 +24,8 @@ test:
 	coverage html
 
 .PHONY: docs
-docs: install
+docs:
+	pip install -r docs/requirements.txt
 	sphinx-build -E -W -b html docs docs/build/html
 
 .PHONY: install
@@ -33,7 +34,6 @@ install:
 	echo "0.0.0" > VERSION
 	pip install -e .[dev]
 	mv COPY_VERSION VERSION
-	pip install -r docs/requirements.txt
 
 .PHONY: uninstall
 uninstall:
