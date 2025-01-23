@@ -3,6 +3,12 @@
 
 """Configuration settings for sphinx."""
 
+import os
+import sys
+
+# Insert the path to the package onto sys.path for autodoc
+sys.path.insert(0, os.path.abspath(".."))
+
 project = "cronberry"
 copyright = "2024 Alec Delaney"
 author = "Alec Delaney"
