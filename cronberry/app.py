@@ -3,8 +3,6 @@
 
 """CLI for working with cronberry library."""
 
-from typing import Optional, Tuple
-
 import click
 
 import cronberry
@@ -37,7 +35,7 @@ def cli() -> None:
 @click.option(
     "-t", "--title", default="", help="Title of specific job to add from CRONTAB"
 )
-def add(crontab: str, filepath: Optional[str], overwrite: bool, title: str) -> None:
+def add(crontab: str, filepath: str | None, overwrite: bool, title: str) -> None:
     """Add a job from CRONTAB to the crontab being used."""
     jobs = cronberry.parse_crontab(crontab)
     if title:
@@ -95,7 +93,7 @@ def add(crontab: str, filepath: Optional[str], overwrite: bool, title: str) -> N
     help=f"CRON_TZ environment variable for the job (default is 'Etc/UTC)",
 )
 def enter(
-    job_title: str, cronjob: str, filepath: Optional[str], overwrite: bool, **kwargs
+    job_title: str, cronjob: str, filepath: str | None, overwrite: bool, **kwargs
 ) -> None:
     """Add CRONJOB with the name JOB_TITLE to the crontab."""
     job_kwargs = {key: value for key, value in kwargs.items() if value is not None}
@@ -125,9 +123,7 @@ def enter(
     default=False,
     help="Ignore jobs missing from the crontab",
 )
-def remove(
-    job_titles: Tuple[str], filepath: Optional[str], ignore_missing: bool
-) -> None:
+def remove(job_titles: tuple[str], filepath: str | None, ignore_missing: bool) -> None:
     """Remove JOB_TITLES from the crontab being used."""
     unique_titles = set(job_titles)
     if len(unique_titles) != len(job_titles):
@@ -159,7 +155,7 @@ def save(filepath: str) -> None:
     default=None,
     help="Filepath to use instead of the user's crontab",
 )
-def clear(filepath: Optional[str]) -> None:
+def clear(filepath: str | None) -> None:
     """Clear the current crontab being used."""
     cronberry.clear_cronjobs(filepath)
 
@@ -180,7 +176,7 @@ def clear(filepath: Optional[str]) -> None:
     default=False,
     help="See the environment variables associated with the job",
 )
-def view(job_title: str, filepath: Optional[str], variables: bool) -> None:
+def view(job_title: str, filepath: str | None, variables: bool) -> None:
     """View the cronbjob JOB_TITLE from a crontab."""
     all_jobs = cronberry.parse_crontab(filepath)
     selected_jobs = [any_job for any_job in all_jobs if any_job.title == job_title]
@@ -215,7 +211,7 @@ def view(job_title: str, filepath: Optional[str], variables: bool) -> None:
     default=False,
     help="See the environment variables associated with the job",
 )
-def list(filepath: Optional[str], variables: bool) -> None:
+def list(filepath: str | None, variables: bool) -> None:
     """List all the jobs in a given cron table."""
     all_jobs = cronberry.parse_crontab(filepath)
     for index, selected_job in enumerate(all_jobs):
@@ -236,7 +232,7 @@ def list(filepath: Optional[str], variables: bool) -> None:
     default=None,
     help="Filepath to use instead of the user's crontab",
 )
-def jobs(filepath: Optional[str]) -> None:
+def jobs(filepath: str | None) -> None:
     """Get the jobs from a specific crontab."""
     jobs = cronberry.parse_crontab(filepath)
     for job in jobs:

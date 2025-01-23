@@ -4,9 +4,7 @@
 """Classes and type annotations for cronjob fields."""
 
 from enum import Enum
-from typing import Any, NamedTuple, Tuple, Union
-
-from typing_extensions import TypeAlias
+from typing import Any, NamedTuple, TypeAlias
 
 
 def _cron_str(comp: "DiscreteValue") -> str:
@@ -52,7 +50,7 @@ class ValueRange(NamedTuple):
 class StepValues(NamedTuple):
     """Named tuple of a set of step values (8/3)."""
 
-    duration: Union[AnyValue, ExactValue, ValueRange]
+    duration: AnyValue | ExactValue | ValueRange
     frequency: ExactValue
 
     def __eq__(self, other: Any) -> bool:
@@ -66,13 +64,13 @@ class StepValues(NamedTuple):
         return f"{_cron_str(self.duration)}/{self.frequency}"
 
 
-ListValue: TypeAlias = Union[AnyValue, ExactValue, ValueRange, StepValues]
+ListValue: TypeAlias = AnyValue | ExactValue | ValueRange | StepValues
 """Type alias of any single list item."""
 
-ListValues: TypeAlias = Tuple[ListValue, ...]
+ListValues: TypeAlias = tuple[ListValue, ...]
 """Type alias for a list of items."""
 
-DiscreteValue: TypeAlias = Union[ListValues, ListValue]
+DiscreteValue: TypeAlias = ListValues | ListValue
 """Type alias for a single discrete value (field value)."""
 
 

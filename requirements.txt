@@ -2,4 +2,3 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 click~=8.1
-typing-extensions~=4.0

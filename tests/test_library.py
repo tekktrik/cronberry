@@ -6,7 +6,6 @@
 import copy
 import os
 import tempfile
-from typing import List
 
 import pytest
 
@@ -66,7 +65,7 @@ def test_cronjob_equality() -> None:
 
     assert copy_job == original_job
 
-    temp_timing: List[cronberry.fields.DiscreteValue] = list(copy_job.timing)
+    temp_timing: list[cronberry.fields.DiscreteValue] = list(copy_job.timing)
     temp_timing[3] = [7, 8]
     altered_timing = cronberry.fields.ExplicitTiming(*temp_timing)
     assert altered_timing != copy_job.timing
