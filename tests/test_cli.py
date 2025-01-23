@@ -5,7 +5,6 @@
 
 import os
 import subprocess
-from typing import Tuple
 
 from click.testing import CliRunner
 
@@ -23,7 +22,7 @@ def crontab_remove() -> int:
     return proc.returncode
 
 
-def crontab_list() -> Tuple[int, bytes, bytes]:
+def crontab_list() -> tuple[int, bytes, bytes]:
     """Use crontab list command."""
     proc = subprocess.Popen(
         ["crontab", "-l"],
@@ -70,9 +69,10 @@ def test_cronberry_save() -> None:
     result = runner.invoke(cli, ["save", dest_filepath])
     assert result.exit_code == 0
 
-    with open(src_filepath, "rb") as srcfile, open(
-        dest_filepath, mode="rb"
-    ) as destfile:
+    with (
+        open(src_filepath, "rb") as srcfile,
+        open(dest_filepath, mode="rb") as destfile,
+    ):
         src = srcfile.read()
         dest = destfile.read()
     assert src == dest

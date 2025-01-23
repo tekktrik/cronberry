@@ -9,16 +9,8 @@ import os
 import re
 import subprocess
 import tempfile
-from typing import (
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
-
-from typing_extensions import TypeAlias
+from collections.abc import Iterable
+from typing import TypeAlias
 
 from . import fields
 
@@ -27,7 +19,7 @@ CURRENT_USER = getpass.getuser()
 CURRENT_USER_PATH = os.path.expanduser("~")
 
 
-Timing: TypeAlias = Union[fields.ShorthandSyntax, fields.ExplicitTiming]
+Timing: TypeAlias = fields.ShorthandSyntax | fields.ExplicitTiming
 """Type alias for any kind of timing specification."""
 
 Command: TypeAlias = str
@@ -89,7 +81,7 @@ class CronJob:
         return False
 
     @staticmethod
-    def parse_cron_text(cron_text: str) -> Tuple[Timing, Command]:
+    def parse_cron_text(cron_text: str) -> tuple[Timing, Command]:
         """Parse a cron job in textual format."""
         try:
             shorthand = cron_text.split(" ")[0]
@@ -107,13 +99,13 @@ class CronJob:
         return timing, remaining_cron_text
 
     @classmethod
-    def from_job(cls, job_text: str, title: str, envvars: Dict[str, str]) -> "CronJob":
+    def from_job(cls, job_text: str, title: str, envvars: dict[str, str]) -> "CronJob":
         """Create a CronJob from a cron job in texual format with a provided title."""
         timing, command = cls.parse_cron_text(job_text)
         return cls(title, timing, command, **envvars)
 
     @staticmethod
-    def _parse_discrete_value(value: str) -> List[fields.DiscreteValue]:
+    def _parse_discrete_value(value: str) -> list[fields.DiscreteValue]:
         """Parse the timing field values, recursively if needed."""
         values = []
         list_values = value.split(",")
@@ -140,7 +132,7 @@ class CronJob:
 
         return values
 
-    def to_job(self) -> Tuple[str, str, Dict[str, str]]:
+    def to_job(self) -> tuple[str, str, dict[str, str]]:
         """Get the job syntax, with the accompanying title."""
         if isinstance(self.timing, fields.ShorthandSyntax):
             timing_text = self.timing.value
@@ -170,7 +162,7 @@ class CronJob:
         return jobtext
 
 
-def parse_crontab(filepath: Optional[str] = None) -> List[CronJob]:
+def parse_crontab(filepath: str | None = None) -> list[CronJob]:
     """Parse the user's crontab."""
     if filepath is None:
         proc = subprocess.Popen(
@@ -182,7 +174,7 @@ def parse_crontab(filepath: Optional[str] = None) -> List[CronJob]:
         with open(filepath, encoding="utf-8") as jobfile:
             text = jobfile.read()
 
-    re_matches: List[Tuple[str, str]] = re.findall(CRONJOB_REGEX, text, re.M)
+    re_matches: list[tuple[str, str]] = re.findall(CRONJOB_REGEX, text, re.M)
     if not re_matches:
         return []
 
@@ -200,7 +192,7 @@ def parse_crontab(filepath: Optional[str] = None) -> List[CronJob]:
 
 
 def add_cronjobs(
-    jobs: Iterable[CronJob], filepath: Optional[str] = None, *, overwrite: bool = False
+    jobs: Iterable[CronJob], filepath: str | None = None, *, overwrite: bool = False
 ) -> None:
     """Add the cron jobs to a crontab."""
     dest_crontab = parse_crontab(filepath)
@@ -230,7 +222,7 @@ def add_cronjobs(
 
 def remove_cronjob(
     job_name: str,
-    filepath: Optional[str] = None,
+    filepath: str | None = None,
     *,
     ignore_missing: bool = False,
 ) -> None:
@@ -248,7 +240,7 @@ def remove_cronjob(
     _update_crontab(current_jobs, filepath)
 
 
-def _update_crontab(jobs: Dict[str, CronJob], filepath: Optional[str] = None) -> None:
+def _update_crontab(jobs: dict[str, CronJob], filepath: str | None = None) -> None:
     """Update the crontab file with the new contents."""
     tabtext = ""
     for index, job in enumerate(jobs.values()):
@@ -276,12 +268,12 @@ def _update_crontab(jobs: Dict[str, CronJob], filepath: Optional[str] = None) ->
         os.remove(output_filepath)
 
 
-def clear_cronjobs(filepath: Optional[str] = None):
+def clear_cronjobs(filepath: str | None = None):
     """Clear all of the cronjobs in a crontab."""
     _update_crontab({}, filepath)
 
 
-def write_cronjobs(jobs: Iterable[CronJob], filepath: Optional[str] = None) -> None:
+def write_cronjobs(jobs: Iterable[CronJob], filepath: str | None = None) -> None:
     """(Over)write a specific crontab with provided jobs."""
     job_dict = {job.title: job for job in jobs}
     _update_crontab(job_dict, filepath)

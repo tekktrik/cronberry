@@ -12,11 +12,10 @@ jobs:
     strategy:
       matrix:
         py-version: [
-          "3.8",
-          "3.9",
           "3.10",
           "3.11",
           "3.12",
+          "3.13",
         ]
     steps:
       - name: Checkout the repository
@@ -31,15 +30,12 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
-      - name: Run pre-commit
+      - name: Run checks
         run: |
-          pre-commit run --all-files
-      - name: Run pytest via coverage.py
+          make check
+      - name: Run tests and generate coverage report
         run: |
-          coverage run -m pytest
-      - name: Print coverage report
-        run: |
-          coverage report
+          make test
       - name: Create XML coverage report
         run: |
           coverage xml -o coverage_${{ matrix.py-version }}.xml
@@ -50,3 +46,6 @@ jobs:
           fail_ci_if_error: true
           file: coverage_${{ matrix.py-version }}.xml
           flags: "py-${{ matrix.py-version }}"
+      - name: Check building documentation
+        run: |
+          make docs

@@ -24,7 +24,7 @@ test:
 	coverage html
 
 .PHONY: docs
-docs:
+docs: install
 	sphinx-build -E -W -b html docs docs/build/html
 
 .PHONY: install
